@@ -1,0 +1,105 @@
+// Functor.fm defines a lawful Functor type and
+// the corresponding unlawful Mappable type
+
+import Base#hw.n
+import Relation
+
+
+// ========================================================
+// =                     Definition                       =
+// ========================================================
+
+T Mappable<F : -(Type -> Type)>
+| mappable ( map : (~A, ~B) -> (A -> B) -> (+F)(A) -> (+F)(B) )
+
+map(F : -(Type -> Type), m : Mappable(F))
+: (~A, ~B) -> (A -> B) -> (+F)(A) -> (+F)(B)
+  (~A, ~B, f) =>
+  case m
+  | mappable => m.map(~A, ~B, f)
+  : (+F)(A) -> (+F)(B)
+
+T Functor<F : -(Type -> Type), s : (X : Type) -> Setoid((+F)(X))>
+| functor
+    ( map      : (~A, ~B) -> (A -> B) -> (+F)(A) -> (+F)(B),
+      identity : (~A, fa : (+F)(A)) ->
+        Eq((+F)(A), s(A), map(~A, ~A, id(~A), fa), fa),
+      compose  : (~A, ~B, ~C, g : B -> C, f : A -> B, fa : (+F)(A)) ->
+        Eq((+F)(C), s(C),
+          map(~A, ~C, (x) => g(f(x)), fa),
+          map(~B, ~C, g, map(~A, ~B, f, fa))
+        )
+    )
+
+functor.map(
+  F : -(Type -> Type),
+  s : (X : Type) -> Setoid((+F)(X)),
+  f : Functor(F,s)
+  )
+: (~A, ~B) -> (A -> B) -> (+F)(A) -> (+F)(B)
+  case f
+  | functor => f.map
+  : (~A, ~B) -> (A -> B) -> (+F)(A) -> (+F)(B)
+
+functor.identity(
+  F : -(Type -> Type),
+  s : (X : Type) -> Setoid((+F)(X)),
+  f : Functor(F,s)
+  )
+: (~A, fa : (+F)(A)) ->
+    Eq((+F)(A), s(A), functor.map(F,s,f,~A, ~A, id(~A), fa), fa)
+  case f
+  | functor => f.identity
+  : (~A, fa : (+F)(A)) -> 
+      Eq((+F)(A), s(A), functor.map(F,s,f,~A, ~A, id(~A), fa), fa)
+
+functor.compose(
+  F : -(Type -> Type),
+  s : (X : Type) -> Setoid((+F)(X)),
+  f : Functor(F,s)
+  )
+: let map = functor.map(F,s,f)
+  (~A, ~B, ~C, g : B -> C, f : A -> B, fa : (+F)(A)) ->
+    Eq((+F)(C), s(C),
+      map(~A, ~C, (x) => g(f(x)), fa),
+      map(~B, ~C, g, map(~A, ~B, f, fa))
+    )
+  case f
+  | functor => f.compose
+  : let map = functor.map(F,s,f)
+    (~A, ~B, ~C, g : B -> C, f : A -> B, fa : (+F)(A)) ->
+      Eq((+F)(C), s(C),
+        map(~A, ~C, (x) => g(f(x)), fa),
+        map(~B, ~C, g, map(~A, ~B, f, fa))
+      )
+
+// ========================================================
+// =                     Conversion                       =
+// ========================================================
+
+functor_to_mappable(
+  F : -(Type -> Type),
+  s : (X : Type) -> Setoid((+F)(X)),
+  f : Functor(F,s),
+  )
+: Mappable(F)
+  case f
+  | functor => mappable(~F, f.map)
+  : Mappable(F)
+
+mappable_to_functor(
+  F : -(Type -> Type),
+  m : Mappable(F),
+  s : (X : Type) -> Setoid((+F)(X)),
+  identity : let map = map(+F, m)
+    (~A, fa : (+F)(A)) -> Eq((+F)(A), s(A), map(~A, ~A, id(~A), fa), fa),
+  compose  : let map = map(+F, m)
+    (~A, ~B, ~C, g : B -> C, f : A -> B, fa : (+F)(A)) ->
+      Eq((+F)(C), s(C),
+        map(~A, ~C, (x) => g(f(x)), fa),
+        map(~B, ~C, g, map(~A, ~B, f, fa))
+      )
+  )
+: Functor(+F,s)
+  functor(~(+F),~s,map(+F,m), identity, compose)
+

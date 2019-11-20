@@ -1,0 +1,74 @@
+// Relation.fm defines a relation type, various properties
+// of relations, and various structures built from them
+
+import Base#hw.n
+
+// ========================================================
+// =                     Definition                       =
+// ========================================================
+
+Relation(A) : Type
+  A -> A -> Type
+
+// ========================================================
+// =               Properties of Relations                =
+// ========================================================
+
+Reflexive(A, R : Relation(A)) : Type
+  (x : A) -> R(x,x)
+
+Symmetric(A, R : Relation(A)) : Type
+  (x : A, y : A, :R(x,y)) -> R(y,x)
+
+Transitive(A, R : Relation(A)) : Type
+  (x : A, y : A, z : A, :R(x,y), :R(y,z)) -> R(x,z)
+
+Quasireflexive(A, R : Relation(A)) : Type
+  (x : A, y : A, :R(x,y)) -> And(R(x,x),R(y,y))
+
+Connexity(A : Type, R : Relation(A)) : Type
+  (x : A, y : A) -> Or(R(x,y), R(y,x))
+
+
+// ========================================================
+// =                 Specific Relations                   =
+// ========================================================
+
+T Preorder<A : Type, R : Relation(A)>
+| preorder
+  ( reflexive  : Reflexive(A,R),
+    transitive : Transitive(A,R)
+  )
+
+T Equivalence<A : Type, R : Relation(A)>
+| equivalence
+  ( reflexive  : Reflexive(A,R),
+    symmetric  : Symmetric(A,R),
+    transitive : Transitive(A,R)
+  )
+
+// ========================================================
+// =       Setoids: Types with Equivalence Relations      =
+// ========================================================
+
+T Proset<A : Type>
+| proset
+  ( R : Relation(A),
+    preorder : Preorder(A,R)
+  )
+
+T Setoid<A : Type>
+| setoid 
+  ( Eq          : Relation(A),
+    equivalence : Equivalence(A,Eq)
+  )
+
+Eq(A, s : Setoid(A)) : Relation(A)
+  case s
+  | setoid => s.Eq
+  : Relation(A)
+
+setoid.equivalence(A, s : Setoid(A)) : Equivalence(A,Eq(A,s))
+  case s
+  | setoid => s.equivalence
+  : Equivalence(A,Eq(A,s))
