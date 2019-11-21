@@ -1,0 +1,25 @@
+import Dependencies
+import Functor
+import Relation.Equality
+
+mappable.maybe : Mappable(Maybe)
+  mappable(~%Maybe, maybe.map)
+
+functor.maybe0 : Functor(%Maybe, (X) => EqualSetoid(Maybe(X)))
+  let map = maybe.map
+  let identity = (~A, ma) =>
+    case ma
+    | none => refl(~Maybe(A), ~none(~A))
+    | some => refl(~Maybe(A), ~some(~A,ma.value))
+    : Equal(Maybe(A), map(~A,~A, id(~A), ma), ma)
+  let compose = (~A, ~B, ~C, g, f, ma) =>
+    case ma
+    | none => refl(~Maybe(C), ~none(~C))
+    | some => refl(~Maybe(C), ~some(~C, g(f(ma.value))))
+    : Equal(
+        Maybe(C),
+        map(~A, ~C, (x) => g(f(x)), ma),
+        map(~B,~C,g,map(~A,~B,f,ma))
+      )
+  functor(~%Maybe, ~((X) => EqualSetoid(Maybe(X))), map, identity, compose)
+

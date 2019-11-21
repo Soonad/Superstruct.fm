@@ -1,33 +1,33 @@
 // Relation.fm defines a relation type, various properties
 // of relations, and various structures built from them
 
-import Base#hw.n
+import Dependencies
 
 // ========================================================
 // =                     Definition                       =
 // ========================================================
 
 Relation(A) : Type
-  A -> A -> Type
+  (-A) -> (-A) -> Type
 
 // ========================================================
 // =               Properties of Relations                =
 // ========================================================
 
 Reflexive(A, R : Relation(A)) : Type
-  (x : A) -> R(x,x)
+  (x : -A) -> R(x,x)
 
 Symmetric(A, R : Relation(A)) : Type
-  (x : A, y : A, :R(x,y)) -> R(y,x)
+  (x : -A, y : -A, :R(x,y)) -> R(y,x)
 
 Transitive(A, R : Relation(A)) : Type
-  (x : A, y : A, z : A, :R(x,y), :R(y,z)) -> R(x,z)
+  (x : -A, y : -A, z : -A, :R(x,y), :R(y,z)) -> R(x,z)
 
 Quasireflexive(A, R : Relation(A)) : Type
-  (x : A, y : A, :R(x,y)) -> And(R(x,x),R(y,y))
+  (x : -A, y : -A, :R(x,y)) -> And(R(x,x),R(y,y))
 
 Connexity(A : Type, R : Relation(A)) : Type
-  (x : A, y : A) -> Or(R(x,y), R(y,x))
+  (x : -A, y : -A) -> Or(R(x,y), R(y,x))
 
 
 // ========================================================
@@ -47,6 +47,7 @@ T Equivalence<A : Type, R : Relation(A)>
     transitive : Transitive(A,R)
   )
 
+
 // ========================================================
 // =       Setoids: Types with Equivalence Relations      =
 // ========================================================
@@ -58,7 +59,7 @@ T Proset<A : Type>
   )
 
 T Setoid<A : Type>
-| setoid 
+| setoid
   ( Eq          : Relation(A),
     equivalence : Equivalence(A,Eq)
   )
@@ -72,3 +73,18 @@ setoid.equivalence(A, s : Setoid(A)) : Equivalence(A,Eq(A,s))
   case s
   | setoid => s.equivalence
   : Equivalence(A,Eq(A,s))
+
+setoid.reflexive(A, s : Setoid(A)) : Reflexive(A,Eq(A,s))
+  case setoid.equivalence(A,s) as eqv
+  | equivalence => eqv.reflexive
+  : Reflexive(A,Eq(A,s))
+
+setoid.symmetric(A, s : Setoid(A)) : Symmetric(A,Eq(A,s))
+  case setoid.equivalence(A,s) as eqv
+  | equivalence => eqv.symmetric
+  : Symmetric(A,Eq(A,s))
+
+setoid.transitive(A, s : Setoid(A)) : Transitive(A,Eq(A,s))
+  case setoid.equivalence(A,s) as eqv
+  | equivalence => eqv.transitive
+  : Transitive(A,Eq(A,s))

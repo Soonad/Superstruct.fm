@@ -1,7 +1,7 @@
 // Functor.fm defines a lawful Functor type and
 // the corresponding unlawful Mappable type
 
-import Base#hw.n
+import Dependencies
 import Relation
 
 

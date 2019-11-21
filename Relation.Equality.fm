@@ -1,0 +1,55 @@
+import Dependencies
+import Relation
+
+EqualReflexive(A) : Reflexive(A,Equal(A))
+  (x) => refl(~A,~x)
+
+EqualSymmetric(A) : Symmetric(A,Equal(A))
+  (x,y,e) => sym(~A,~x,~y,e)
+
+EqualTransitive(A) : Transitive(A,Equal(A))
+  (x,y,z,xy,yz) => trans(~A,~x,~y,~z,xy,yz)
+
+EqualEquivalence(A) : Equivalence(A,Equal(A))
+   equivalence(
+    ~A,
+    ~Equal(A),
+    EqualReflexive(A),
+    EqualSymmetric(A),
+    EqualTransitive(A)
+   )
+
+EqualSetoid(A) : Setoid(A)
+  setoid(~A, Equal(A), EqualEquivalence(A))
+
+FEqual(A,B, s : -Setoid(B), f : -(A -> B), g : -(A -> B)) : Type
+  (x : -A) -> Eq(B, s, (+f)(x), (+g)(x))
+
+FEqualReflexive(A,B,s : Setoid(B)) : Reflexive(A -> B,FEqual(A,B,%s))
+  (f, x) => setoid.reflexive(B,s,(+f)(x))
+
+FEqualSymmetric(A,B,s : Setoid(B)) : Symmetric(A -> B,FEqual(A,B,%s))
+  (f,g,e,x) => setoid.symmetric(B,s,(+f)(x), (+g)(x), e(x))
+
+FEqualTransitive(A,B,s : Setoid(B)) : Transitive(A -> B,FEqual(A,B,%s))
+  (f,g,h,fg,gh,x) => setoid.transitive(B,s,(+f)(x),(+g)(x),(+h)(x),fg(x),gh(x))
+
+FEqualEquivalence(A,B, s : Setoid(B)) : Equivalence(A -> B, FEqual(A,B,s))
+  case setoid.equivalence(B,s) as e
+  | equivalence =>
+     let ref = (f, x) => e.reflexive((+f)(x))
+     let sym = (f,g,e,x) => e.symmetric((+f)(x),(+g)(x), e(x))
+     let tra = (f,g,h,fg,gh,x) =>
+       e.transitive((+f)(x),(+g)(x),(+h)(x),fg(x),gh(x))
+     equivalence( ~(A -> B), ~FEqual(A,B,%s), ref, sym, tra)
+  : Equivalence(A -> B, FEqual(A,B,s))
+
+FEqualSetoid(A,B,s : Setoid(B)) : Setoid(A -> B)
+  setoid(~(A -> B), FEqual(A,B, %s), FEqualEquivalence(A,B,s))
+
+FunctionSetoid(A,B) : Setoid(A -> B)
+  let s = EqualSetoid(B)
+  setoid(~(A -> B), FEqual(A,B,%s), FEqualEquivalence(A,B,s))
+
+
+
