@@ -1,0 +1,13 @@
+import Dependencies
+import Relation
+import Operation
+
+T Monoid<A : Type, s : -Setoid(A)>
+| monoid
+  ( f           : Op2(A)
+  , e           : A
+  , associative : Associative(A,s,f)
+  , identity    : Identity(A,s,f,e)
+  )
+
+

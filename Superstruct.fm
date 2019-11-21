@@ -3,3 +3,9 @@ import Relation
 import Relation.Equality
 import Functor
 import Functor.Maybe
+
+import Operation
+import Magma
+import Semigroup
+import Monoid
+

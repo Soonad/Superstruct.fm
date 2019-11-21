@@ -1,0 +1,28 @@
+import Dependencies
+import Operation
+import Magma
+
+T Semigroup<A : Type, s : -Setoid(A)>
+| semigroup
+  ( f           : Op2(A)
+  , associative : Associative(A,s,f)
+  )
+
+magma_to_semigroup(
+  A,
+  s     : Setoid(A),
+  m     : Magma(A),
+  assoc : Associative(A,s,magma.f(A,m))
+  )
+: Semigroup(A,s)
+  semigroup(~A,~s,magma.f(A,m),assoc)
+
+semigroup_to_magma(
+  A,
+  s : Setoid(A),
+  m : Semigroup(A,s)
+  )
+: Magma(A)
+  case m
+  | semigroup => magma(~A,m.f)
+  : Magma(A)

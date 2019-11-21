@@ -1,0 +1,46 @@
+import Dependencies
+import Relation
+import Operation
+
+T Magma <A : Type>
+| magma ( f : Op2(A) )
+
+magma.f(A, m : Magma(A)) : Op2(A)
+  case m
+  | magma => m.f
+  : Op2(A)
+
+T Magma1 <A : Type>
+| magma1
+  ( f : Op2(A)
+  , a : A
+  )
+
+T Magma2<A : Type>
+| magma2
+  ( f : Op2(A)
+  , a : A
+  , b : A
+  )
+
+T DoubleMagma<A : Type>
+| double_magma
+  ( f : Op2(A)
+  , g : Op2(A)
+  )
+
+T DoubleMagma1<A : Type>
+| Doublemagma1
+  ( f : Op2(A)
+  , g : Op2(A)
+  , a : A
+  )
+
+T DoubleMagma2<A : Type>
+| Doublemagma2
+  ( f : Op2(A)
+  , g : Op2(A)
+  , a : A
+  )
+
+

@@ -1,0 +1,35 @@
+import Dependencies
+import Relation
+
+// ========================================================
+// =                     Definition                       =
+// ========================================================
+
+Op1(A) : Type
+  A -> A
+
+Op2(A) : Type
+  A -> A -> A
+
+Op3(A) : Type
+  A -> A -> A -> A
+
+
+// ========================================================
+// =              Binary Operation Properties             =
+// ========================================================
+
+Associative(A, s : Setoid(A), f : Op2(A)) : Type
+  (x : A, y : A, z : A) -> Eq(A,s,f(f(x,y),z), f(x,f(y,z)))
+
+
+LeftIdentity(A, s : Setoid(A), f : Op2(A), e : A) : Type
+   (y : A) -> Eq(A,s,f(y,e), y)
+
+RightIdentity(A, s : Setoid(A), f : Op2(A), e : A) : Type
+   (y : A) -> Eq(A,s,y, f(y,e))
+
+Identity(A, s : Setoid(A), f : Op2(A), e : A) : Type
+  And(LeftIdentity(A,s,f,e), RightIdentity(A,s,f,e))
+
+
