@@ -5,7 +5,7 @@ import Operation
 T Magma <A : Type>
 | magma ( f : Op2(A) )
 
-magma.f(A, m : Magma(A)) : Op2(A)
+magma.f(A; m : Magma(A)) : Op2(A)
   case m
   | magma => m.f
   : Op2(A)
@@ -13,8 +13,18 @@ magma.f(A, m : Magma(A)) : Op2(A)
 T Magma1 <A : Type>
 | magma1
   ( f : Op2(A)
-  , a : A
+  , e : A
   )
+
+magma1.f(A; m : Magma1(A)) : Op2(A)
+  case m
+  | magma1 => m.f
+  : Op2(A)
+
+magma1.e(A; m : Magma1(A)) : A
+  case m
+  | magma1 => m.e
+  : A
 
 T Magma2<A : Type>
 | magma2
@@ -41,6 +51,7 @@ T DoubleMagma2<A : Type>
   ( f : Op2(A)
   , g : Op2(A)
   , a : A
+  , b : A
   )
 
 

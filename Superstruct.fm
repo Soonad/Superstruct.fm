@@ -1,4 +1,4 @@
-import Base#hw.n
+import Dependencies
 import Relation
 import Relation.Equality
 import Functor
@@ -6,6 +6,9 @@ import Functor.Maybe
 
 import Operation
 import Magma
-import Semigroup
-import Monoid
+import Group
+import Ring
+import Lattice
+
+
 

@@ -8,26 +8,26 @@ import Dependencies
 // ========================================================
 
 Relation(A) : Type
-  (-A) -> (-A) -> Type
+  A -> A -> Type
 
 // ========================================================
 // =               Properties of Relations                =
 // ========================================================
 
 Reflexive(A, R : Relation(A)) : Type
-  (x : -A) -> R(x,x)
+  (x : A) -> R(x,x)
 
 Symmetric(A, R : Relation(A)) : Type
-  (x : -A, y : -A, :R(x,y)) -> R(y,x)
+  (x : A, y : A, :R(x,y)) -> R(y,x)
 
 Transitive(A, R : Relation(A)) : Type
-  (x : -A, y : -A, z : -A, :R(x,y), :R(y,z)) -> R(x,z)
+  (x : A, y : A, z : A, :R(x,y), :R(y,z)) -> R(x,z)
 
 Quasireflexive(A, R : Relation(A)) : Type
-  (x : -A, y : -A, :R(x,y)) -> And(R(x,x),R(y,y))
+  (x : A, y : A, :R(x,y)) -> And(R(x,x),R(y,y))
 
 Connexity(A : Type, R : Relation(A)) : Type
-  (x : -A, y : -A) -> Or(R(x,y), R(y,x))
+  (x : A, y : A) -> Or(R(x,y), R(y,x))
 
 
 // ========================================================

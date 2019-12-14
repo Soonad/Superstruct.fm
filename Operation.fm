@@ -14,22 +14,110 @@ Op2(A) : Type
 Op3(A) : Type
   A -> A -> A -> A
 
-
 // ========================================================
 // =              Binary Operation Properties             =
 // ========================================================
 
-Associative(A, s : Setoid(A), f : Op2(A)) : Type
-  (x : A, y : A, z : A) -> Eq(A,s,f(f(x,y),z), f(x,f(y,z)))
+Associative(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A, y: A, z: A) -> Eq(A,s,f(f(x,y),z), f(x,f(y,z)))
+
+PowerAssociative(A, s: Setoid(A), f :Op2(A)) : Type
+  (x: A) -> Eq(A,s,f(f(x,x),x), f(x,f(x,x)))
+
+LeftAlternative(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A, y: A) -> Eq(A,s,f(f(x,x),y), f(x,f(x,y)))
+
+RightAlternative(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A, y: A) -> Eq(A,s,f(y,f(x,x)), f(f(y,x),x))
+
+Alternative(A, s: Setoid(A), f: Op2(A)) : Type
+   #{LeftAlternative(A,s,f), RightAlternative(A,s,f)}
+
+Flexible(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A, y: A) -> Eq(A,s, f(f(x,y),x), f(x,f(y,x)))
+
+Commutative(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A, y: A) -> Eq(A,s, f(x,y), f(y,x))
+
+Medial(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A, y: A, u: A, z: A) -> Eq(A,s, f(f(x,y), f(u,z)), f(f(x,u),f(y,z)))
+
+LeftSemimedial(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A, y: A, z: A) -> Eq(A,s, f(f(x,x), f(y,z)), f(f(x,y),f(x,z)))
+
+RightSemimedial(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A, y: A, z: A) -> Eq(A,s, f(f(x,x), f(y,z)), f(f(x,y),f(x,z)))
+
+Semimedial(A, s: Setoid(A), f: Op2(A)) : Type
+  #{LeftSemimedial(A,s,f),RightSemimedial(A,s,f)}
+
+Idempotent(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A) -> Eq(A,s, f(x,x), x)
+
+Unipotent(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A, y: A) -> Eq(A,s,f(x,x), f(y,y))
+
+Zeropotent(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A, y: A) -> #{Eq(A,s,f(f(x,x),y),f(x,x)), Eq(A,s,f(y,f(x,x)),f(x,x))}
+
+Null(A, s : Setoid(A), f : Op2(A)) : Type
+  (x: A, y: A, u: A, v: A) -> #{Eq(A,s,f(x,y),x), Eq(A,s,f(u,v),v)}
+
+LeftCancellative(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A, y: A, z: A, :Eq(A,s,f(x,y),f(x,z))) -> Eq(A,s,y,z)
+
+RightCancellative(A, s: Setoid(A), f: Op2(A)) : Type
+  (x: A, y: A, z: A, :Eq(A,s,f(y,x),f(z,x))) -> Eq(A,s,y,z)
+
+Cancellative(A, s : Setoid(A), f : Op2(A)) : Type;
+  #{LeftCancellative(A,s,f),RightCancellative(A,s,f)}
+
+LatinSquare(A, s : Setoid(A), f : Op2(A)) : Type
+  (a: A, b: A) ->
+  #{Sigma(A, (x) => Eq(A,s,f(a,x),b)), Sigma(A, (y) => Eq(A,s,f(y,a),b))}
 
 
-LeftIdentity(A, s : Setoid(A), f : Op2(A), e : A) : Type
-   (y : A) -> Eq(A,s,f(y,e), y)
+// Properties of elements in relation to binary operations
+//=======================================================
 
-RightIdentity(A, s : Setoid(A), f : Op2(A), e : A) : Type
-   (y : A) -> Eq(A,s,y, f(y,e))
+LeftZero(A, s: Setoid(A), f: Op2(A), e: A) : Type
+  (y: A) -> Eq(A,s, f(y,e), e)
 
-Identity(A, s : Setoid(A), f : Op2(A), e : A) : Type
-  And(LeftIdentity(A,s,f,e), RightIdentity(A,s,f,e))
+RightZero(A, s: Setoid(A), f: Op2(A), e: A) : Type
+  (y: A) -> Eq(A,s,f(e,y), e)
 
+Zero(A, s : Setoid(A), f: Op2(A), e: A) : Type
+  And(LeftZero(A,s,f,e),RightZero(A,s,f,e))
 
+LeftIdentity(A, s: Setoid(A), f: Op2(A), e: A) : Type
+   (y: A) -> Eq(A,s,f(y,e), y)
+
+RightIdentity(A, s: Setoid(A), f: Op2(A), e: A) : Type
+   (y: A) -> Eq(A,s,y, f(y,e))
+
+Identity(A, s: Setoid(A), f: Op2(A), e : A) : Type
+  #{LeftIdentity(A,s,f,e), RightIdentity(A,s,f,e)}
+
+LeftInverse(A, s: Setoid(A), f: Op2(A) , e: A, p: Identity(A,s,f,e)) : Type
+  (y: A) -> Sigma(A, (x) => Eq(A,s,f(x,y),e))
+
+RightInverse(A, s: Setoid(A), f: Op2(A), e: A, p: Identity(A,s,f,e)) : Type
+  (y : A) -> Sigma(A, (x) => Eq(A,s,f(y,x),e))
+
+Inverse(A, s: Setoid(A), f: Op2(A), e: A, p: Identity(A,s,f,e)) : Type
+  #{LeftInverse(A,s,f,e,p),RightInverse(A,s,f,e,p)}
+
+// Properties of 2 binary operations
+// =================================
+
+LeftDistributive(A, s : Setoid(A), f : Op2(A), g : Op2(A)) : Type
+  (x : A, y : A, z : A) -> Eq(A,s,f(x, g(y,z)), g(f(x,y),f(x,z)))
+
+RightDistributive(A, s : Setoid(A), f : Op2(A), g : Op2(A)) : Type
+  (x : A, y : A, z : A) -> Eq(A,s,f(g(y,z),x), g(f(y,x),f(z,x)))
+
+Distributive(A, s : Setoid(A), f : Op2(A), g : Op2(A)) : Type
+  #{LeftDistributive(A,s,f,g), RightDistributive(A,s,f,g)}
+
+Absorption(A, s : Setoid(A), f : Op2(A), g : Op2(A)) : Type
+  (x: A, y: A) -> #{Eq(A,s,g(x, f(x, y)),x), Eq(A,s,f(x, g(x,y)),x)}

@@ -3,23 +3,24 @@ import Functor
 import Relation.Equality
 
 mappable.maybe : Mappable(Maybe)
-  mappable(~%Maybe, maybe.map)
+  mappable(Maybe; map_maybe)
 
-functor.maybe0 : Functor(%Maybe, (X) => EqualSetoid(Maybe(X)))
-  let map = maybe.map
-  let identity = (~A, ma) =>
+functor.maybe0 : Functor(Maybe, (X) => EqualSetoid(Maybe(X)))
+  let map = map_maybe
+  let identity = (A; ma) =>
     case ma
-    | none => refl(~Maybe(A), ~none(~A))
-    | some => refl(~Maybe(A), ~some(~A,ma.value))
-    : Equal(Maybe(A), map(~A,~A, id(~A), ma), ma)
-  let compose = (~A, ~B, ~C, g, f, ma) =>
+    | none => equal(Maybe(A); none(A;);)
+    | some => equal(Maybe(A); some(A;ma.value);)
+    : Equal(Maybe(A), map(A;A;id(A;), ma), ma)
+  let compose = (A; B; C; g, f, ma) =>
     case ma
-    | none => refl(~Maybe(C), ~none(~C))
-    | some => refl(~Maybe(C), ~some(~C, g(f(ma.value))))
+    | none => equal(Maybe(C); none(C;);)
+    | some => equal(Maybe(C); some(C; g(f(ma.value)));)
     : Equal(
         Maybe(C),
-        map(~A, ~C, (x) => g(f(x)), ma),
-        map(~B,~C,g,map(~A,~B,f,ma))
+        map(A;C;(x) => g(f(x)), ma),
+        map(B;C;g,map(A;B;f,ma))
       )
-  functor(~%Maybe, ~((X) => EqualSetoid(Maybe(X))), map, identity, compose)
+  functor(Maybe; (X) => EqualSetoid(Maybe(X)); map, identity, compose)
+
 
