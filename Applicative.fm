@@ -1,0 +1,47 @@
+
+import Dependencies
+import Relation
+
+T Applicable<F: Type -> Type>
+| applicable
+  ( pure  : (A;) -> A -> F(A)
+  , apply : (A;B;) -> F(A -> B) -> F(A) -> F(B)
+  )
+
+T Applicative<F : Type -> Type, s : (X : Type) -> Setoid(F(X))>
+| applicative
+  ( pure        : (A;) -> A -> F(A)
+
+  , apply       : (A; B;) -> F(A -> B) -> F(A) -> F(B)
+
+  , identity    : (A; fa : F(A)) ->
+      Eq(F(A),s(A)
+      , apply(A; A; pure(A -> A; id(A;)), fa)
+      , fa
+      )
+
+  , composition : (A; B; C; u: F(B -> C), v: F(A -> B), w: F(A)) ->
+      let cmp        = pure((B -> C) -> (A -> B) -> A -> C; (g,f,x) => g(f(x)))
+      let appA_C     = apply(A;C;)
+      let appAB_AC   = apply(A -> B; A -> C;)
+      let appBC_ABAC = apply(B -> C; (A -> B) -> A -> C;)
+      let appB_C     = apply(B;C;)
+      let appA_B     = apply(A;B;)
+      Eq(F(C),s(C)
+      ,appA_C(appAB_AC(appBC_ABAC(cmp,u),v),w)
+      ,appB_C(u, appA_B(v,w))
+      )
+
+  , homomorphism : (A;B; f: A -> B, x : A) ->
+      Eq(F(B),s(B)
+      , apply(A;B; pure(A -> B; f), pure(A; x))
+      , pure(B; f(x))
+      )
+
+  , interchange : (A;B; f : F(A -> B), x : A) ->
+      Eq(F(B), s(B)
+      , apply(A; B; f, pure(A; x))
+      , apply(A -> B; B; pure((A -> B) -> B; pipe(A; B; x)), f)
+      )
+
+  )

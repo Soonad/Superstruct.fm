@@ -1,0 +1,33 @@
+import Dependencies
+import Relation
+
+T Bindable<M : Type -> Type>
+| bindable
+  ( return : (A; x : A) -> M(A)
+  , bind   : (A; B; f : A -> M(B), fa : M(A)) -> M(B)
+  )
+
+T Monad<M : Type -> Type, s : (X : Type) -> Setoid(M(X))>
+| monad
+  ( return      : (A; x : A) -> M(A)
+
+  , bind        : (A; B; f : A -> M(B), fa : M(A)) -> M(B)
+
+  , identity1   : (A; B; x : A, f : A -> M(B)) -> 
+      Eq(M(B), s(B)
+      , bind(A; B; f, return(A; x))
+      , f(x)
+      )
+
+  , identity2   : (A; m : M(A)) -> 
+      Eq(M(A), s(A)
+      , bind(A; A; return(A;), m)
+      , m
+      )
+
+  , associative : (A; B; C; m : M(A), f : A -> M(B), g : B -> M(C)) ->
+      Eq(M(C), s(C)
+      , bind(B; C; g, bind(A; B; f, m))
+      , bind(A; C; (x) => bind(B; C; g, f(x)), m)
+      )
+  )
